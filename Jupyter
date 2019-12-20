@@ -6,6 +6,11 @@
 # When a directory is selected, go there. Otherwise go to current
 # directory. If more than one directory is selected, show error.
 
+# IFS is by default set to space
+IFS_BAK=$IFS
+# Update IFS to \n
+IFS="
+"
 if [ -n "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" ]; then
     set $NAUTILUS_SCRIPT_SELECTED_FILE_PATHS
     if [ $# -eq 1 ]; then
@@ -29,6 +34,9 @@ if [ -n "`echo "$destination" | grep '^[a-zA-Z0-9]\+:'`" ]; then
         --text="Only local directories can be used."
     exit 1
 fi
+# Update IFS back to the default
+IFS=$IFS_BAK
 
 cd "$destination" 
+# Open Jupyter
 exec x-terminal-emulator -e "bash -c -i 'eval $(conda shell.bash hook); conda activate default && jupyter notebook;exec $SHELL'"
